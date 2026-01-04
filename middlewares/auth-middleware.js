@@ -1,5 +1,5 @@
-import { TokenManager } from '../helpers/token-manager.js';
 import { DocumentManager } from '../helpers/document-manager.js';
+import { TokenManager } from '../helpers/token-manager.js';
 
 const authManager = new TokenManager();
 const documentManager = new DocumentManager();
