@@ -18,8 +18,7 @@ export class DatabaseController {
   getMany = async ( req, res, next ) => {
     try {
       const user = req.user;
-      const { limit = 10, page = 1, sort = 1 } = req.query;
-      const document = await this.databaseService.getMany( { user }, { limit: +limit, page: +page, sort: +sort } );
+      const document = await this.databaseService.getMany( { user }, req.query );
       res.json( document );
     } catch ( error ) {
       next( error );
@@ -30,8 +29,9 @@ export class DatabaseController {
     try {
       const user = req.user;
       const data = req.body;
+      const createdAt = Date.now();
       const validatedData = this.validatorManager.parse( data );
-      const document = await this.databaseService.create( { user, ...validatedData } );
+      const document = await this.databaseService.create( { user, createdAt, ...validatedData } );
       res.json( document );
     } catch ( error ) {
       next( error );
