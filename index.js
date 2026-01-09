@@ -6,8 +6,10 @@ import express from 'express';
 import mongoose from 'mongoose';
 
 import { errorMiddleware } from './middlewares/error-middleware.js';
+import { addressRouter } from './routers/address-router.js';
 import { authRouter } from './routers/auth-router.js';
 import { categoryRouter } from './routers/category-router.js';
+import { orderRouter } from './routers/order-router.js';
 import { productRouter } from './routers/product-router.js';
 import { quantityRouter } from './routers/quantity-router.js';
 
@@ -20,6 +22,8 @@ app.use( '/auth', authRouter );
 app.use( '/products', productRouter );
 app.use( '/categories', categoryRouter );
 app.use( '/quantities', quantityRouter );
+app.use( '/addresses', addressRouter );
+app.use( '/orders', orderRouter );
 
 app.use( errorMiddleware );
 
