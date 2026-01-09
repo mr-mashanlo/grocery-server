@@ -9,9 +9,9 @@ export class DatabaseService {
   };
 
   getMany = async ( query, option ) => {
-    const { limit, page } = { limit: '0', page: '1', ...option };
+    const { limit, page, sort } = { limit: '0', page: '1', sort: '1', ...option };
     const skip = +page > 0 ? ( +page - 1 ) * +limit : 0;
-    const data = await this.model.find( query ).limit( +limit ).skip( skip );
+    const data = await this.model.find( query ).sort( { _id: +sort } ).limit( +limit ).skip( skip );
     const total = await this.model.countDocuments( query );
     return { data, limit: +limit, total, page: +page };
   };
@@ -22,6 +22,10 @@ export class DatabaseService {
 
   update = async ( query, data ) => {
     return await this.model.findOneAndUpdate( query, data, { new: true } );
+  };
+
+  upgrade = async ( query, data ) => {
+    return await this.model.findOneAndUpdate( query, { $set: data }, { upsert: true, new: true } );
   };
 
   remove = async ( query ) => {
