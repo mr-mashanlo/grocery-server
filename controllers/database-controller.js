@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export class DatabaseController {
 
   constructor( databaseService, validatorManager ) {
@@ -30,7 +32,7 @@ export class DatabaseController {
     try {
       const user = req.user;
       const data = req.body;
-      const createdAt = Date.now();
+      const createdAt = moment().format( 'YYYY-MM-DD' );
       const validatedData = this.validatorManager.parse( data );
       const document = await this.databaseService.create( { user, createdAt, ...validatedData } );
       res.json( document );

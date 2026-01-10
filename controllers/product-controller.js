@@ -24,7 +24,7 @@ export class ProductController extends DatabaseController {
       const { limit = 0, page = 1, ...others } = req.query;
       const products = await this.databaseService.getMany( others, { limit, page } );
       const quantities = await this.quantityService.getMany();
-      const data = products.data.map( product => ( { ...product._doc, quantity: quantities.data.find( quantity => quantity._doc.product.toString() === product._doc._id.toString() ) } ) );
+      const data = products.data.map( product => ( { ...product._doc, stock: quantities.data.find( quantity => quantity._doc.product.toString() === product._doc._id.toString() ) } ) );
       const document = { ...products, data };
       res.json( document );
     } catch ( error ) {
