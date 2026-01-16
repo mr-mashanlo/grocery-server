@@ -1,17 +1,15 @@
 import { Router } from 'express';
 
-import { AddressController } from '../controllers/address-controller.js';
-import { ValidatorManager } from '../helpers/validator-manager.js';
-import { authMiddleware } from '../middlewares/auth-middleware.js';
-import { AddressDTO, AddressModel } from '../models/address.js';
-import { DatabaseService } from '../services/database-service.js';
+import { addressController } from '../entities/address/container.js';
+import { AddressSchema } from '../entities/address/infrastructure/address-schema.js';
+import { tokenService } from '../entities/auth/container.js';
+import { isAuth } from '../entities/auth/infrastructure/is-auth.js';
+import { validate } from '../shared/validate.js';
 
 const router = Router();
-const validatorManager = new ValidatorManager( AddressDTO );
-const databaseService = new DatabaseService( AddressModel );
-const databaseController = new AddressController( databaseService, validatorManager );
 
-router.get( '/', authMiddleware, databaseController.get );
-router.post( '/', authMiddleware, databaseController.upgrade );
+router.post( '/', isAuth( tokenService ), validate( AddressSchema ), addressController.createMyAddress );
+router.get( '/', isAuth( tokenService ), addressController.getMyAddress );
+router.put( '/:id', isAuth( tokenService ), validate( AddressSchema ), addressController.updateMyAddress );
 
 export { router as addressRouter };

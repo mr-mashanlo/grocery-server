@@ -1,18 +1,17 @@
 import { Router } from 'express';
 
-import { DatabaseController } from '../controllers/database-controller.js';
-import { ValidatorManager } from '../helpers/validator-manager.js';
-import { authMiddleware } from '../middlewares/auth-middleware.js';
-import { CategoryDTO, CategoryModel } from '../models/category.js';
-import { DatabaseService } from '../services/database-service.js';
+import { tokenService } from '../entities/auth/container.js';
+import { isAuth } from '../entities/auth/infrastructure/is-auth.js';
+import { categoryController } from '../entities/category/container.js';
+import { CategorySchema } from '../entities/category/infrastructure/category-schema.js';
+import { validate } from '../shared/validate.js';
 
 const router = Router();
-const validatorManager = new ValidatorManager( CategoryDTO );
-const databaseService = new DatabaseService( CategoryModel );
-const databaseController = new DatabaseController( databaseService, validatorManager );
 
-router.post( '/', authMiddleware, databaseController.create );
-router.get( '/', databaseController.getMany );
-router.put( '/:id', authMiddleware, databaseController.update );
+router.post( '/', isAuth( tokenService ), validate( CategorySchema ), categoryController.createCategory );
+router.delete( '/:id', isAuth( tokenService ), categoryController.deleteCategory );
+router.get( '/:id', categoryController.getCategoryById );
+router.get( '/', categoryController.getAllCategories );
+router.put( '/:id', isAuth( tokenService ), validate( CategorySchema ), categoryController.updateCategory );
 
 export { router as categoryRouter };

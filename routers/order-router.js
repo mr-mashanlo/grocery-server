@@ -1,18 +1,15 @@
 import { Router } from 'express';
 
-import { DatabaseController } from '../controllers/database-controller.js';
-import { ValidatorManager } from '../helpers/validator-manager.js';
-import { authMiddleware } from '../middlewares/auth-middleware.js';
-import { OrderDTO, OrderModel } from '../models/order.js';
-import { DatabaseService } from '../services/database-service.js';
+import { tokenService } from '../entities/auth/container.js';
+import { isAuth } from '../entities/auth/infrastructure/is-auth.js';
+import { orderController } from '../entities/order/container.js';
+import { OrderSchema } from '../entities/order/infrastructure/order-schema.js';
+import { validate } from '../shared/validate.js';
 
 const router = Router();
-const validatorManager = new ValidatorManager( OrderDTO );
-const databaseService = new DatabaseService( OrderModel );
-const databaseController = new DatabaseController( databaseService, validatorManager );
 
-router.post( '/', authMiddleware, databaseController.create );
-router.get( '/', authMiddleware, databaseController.getMany );
-router.get( '/:id', authMiddleware, databaseController.get );
+router.post( '/', isAuth( tokenService ), validate( OrderSchema ), orderController.createMyOrder );
+router.get( '/', isAuth( tokenService ), orderController.getMyOrders );
+router.get( '/:id', orderController.getOrderById );
 
 export { router as orderRouter };
