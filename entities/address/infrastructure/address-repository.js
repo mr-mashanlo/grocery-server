@@ -13,7 +13,7 @@ export class AddressRepository {
   };
 
   update = async ( id, address ) => {
-    return await this.model.findOneAndUpdate( { _id: id }, address );
+    return await this.model.findOneAndUpdate( { _id: id }, address, { new: true } );
   };
 
 }

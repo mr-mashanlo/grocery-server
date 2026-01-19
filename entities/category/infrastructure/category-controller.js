@@ -22,15 +22,6 @@ export class CategoryController {
     }
   };
 
-  getCategoryById = async ( req, res, next ) => {
-    try {
-      const category = await this.categoryService.getCategoryById( req.params.id );
-      res.json( category );
-    } catch ( error ) {
-      next( error );
-    }
-  };
-
   getAllCategories = async ( req, res, next ) => {
     try {
       const categories = await this.categoryService.getAllCategories( {
@@ -39,6 +30,15 @@ export class CategoryController {
         order: req.query.order
       } );
       res.json( categories );
+    } catch ( error ) {
+      next( error );
+    }
+  };
+
+  getCategoryById = async ( req, res, next ) => {
+    try {
+      const category = await this.categoryService.getCategoryById( req.params.id );
+      res.json( category );
     } catch ( error ) {
       next( error );
     }

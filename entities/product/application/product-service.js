@@ -11,14 +11,6 @@ export class ProductService {
     return await this.productRepository.create( { ...product, createdAt } );
   };
 
-  deleteProduct = async id => {
-    return await this.productRepository.delete( id );
-  };
-
-  getProductById = async id => {
-    return await this.productRepository.findById( id );
-  };
-
   getAllProducts = async ( query ) => {
     const filters = {};
     const sort = {};
@@ -44,7 +36,15 @@ export class ProductService {
     pagination.limit = limit;
     pagination.skip = ( page - 1 ) * limit;
 
-    return await this.productRepository.findMany( { filters, sort, pagination } );
+    return await this.productRepository.find( { filters, sort, pagination } );
+  };
+
+  deleteProduct = async id => {
+    return await this.productRepository.delete( id );
+  };
+
+  getProductById = async id => {
+    return await this.productRepository.findById( id );
   };
 
   updateProduct = async ( id, product ) => {

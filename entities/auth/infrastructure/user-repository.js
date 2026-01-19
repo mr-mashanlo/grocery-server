@@ -25,7 +25,7 @@ export class UserRepository {
   };
 
   clearRefreshToken = async ( id ) => {
-    return await this.model.findOneAndUpdate( { _id: id }, { refreshToken: null, expiredAt: 0 } );
+    return await this.model.findOneAndUpdate( { _id: id }, { refreshToken: null, expiredAt: 0 }, { new: true } );
   };
 
 }

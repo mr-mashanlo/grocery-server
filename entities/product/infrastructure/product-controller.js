@@ -22,15 +22,6 @@ export class ProductController {
     }
   };
 
-  getProductById = async ( req, res, next ) => {
-    try {
-      const product = await this.productService.getProductById( req.params.id );
-      res.json( product );
-    } catch ( error ) {
-      next( error );
-    }
-  };
-
   getAllProducts = async ( req, res, next ) => {
     try {
       const products = await this.productService.getAllProducts( {
@@ -42,6 +33,15 @@ export class ProductController {
         limit: req.query.limit
       } );
       res.json( products );
+    } catch ( error ) {
+      next( error );
+    }
+  };
+
+  getProductById = async ( req, res, next ) => {
+    try {
+      const product = await this.productService.getProductById( req.params.id );
+      res.json( product );
     } catch ( error ) {
       next( error );
     }

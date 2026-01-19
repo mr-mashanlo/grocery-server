@@ -11,14 +11,6 @@ export class CategoryService {
     return await this.categoryRepository.create( { ...category, createdAt } );
   };
 
-  deleteCategory = async id => {
-    return await this.categoryRepository.delete( id );
-  };
-
-  getCategoryById = async id => {
-    return await this.categoryRepository.findById( id );
-  };
-
   getAllCategories = async ( query ) => {
     const filters = {};
     const sort = {};
@@ -33,7 +25,15 @@ export class CategoryService {
       sort[query.sort] = query.order === 'desc' ? -1 : 1;
     }
 
-    return await this.categoryRepository.findMany( { filters, sort } );
+    return await this.categoryRepository.find( { filters, sort } );
+  };
+
+  deleteCategory = async id => {
+    return await this.categoryRepository.delete( id );
+  };
+
+  getCategoryById = async id => {
+    return await this.categoryRepository.findById( id );
   };
 
   updateCategory = async ( id, category ) => {
