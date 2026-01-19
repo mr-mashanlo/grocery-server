@@ -9,7 +9,9 @@ import { validate } from '../shared/validate.js';
 const router = Router();
 
 router.post( '/', isAuth( tokenService ), validate( OrderSchema ), orderController.createMyOrder );
+router.get( '/all', isAuth( tokenService ), orderController.getAllOrders );
 router.get( '/', isAuth( tokenService ), orderController.getMyOrders );
 router.get( '/:id', orderController.getOrderById );
+router.put( '/:id', isAuth( tokenService ), orderController.updateOrderStatus );
 
 export { router as orderRouter };
