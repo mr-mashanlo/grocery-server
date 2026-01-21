@@ -14,5 +14,4 @@ router.get( '/:id', productController.getProductById );
 router.get( '/', productController.getAllProducts );
 router.put( '/:id', isAuth( tokenService ), validate( ProductSchema ), productController.updateProduct );
 
-
 export { router as productRouter };
