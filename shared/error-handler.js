@@ -6,5 +6,7 @@ export const errorHandler = ( err, req, res, next ) => {
     return res.status( err.status ).json( { status: err.status, message: err.message, errors: err.errors } );
   };
 
+  console.log( err );
+
   return res.status( 500 ).json( { errors: [ { name: 'error', message: 'Something went wrong' } ] } );
 };
