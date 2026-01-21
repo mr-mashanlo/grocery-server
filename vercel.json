@@ -30,7 +30,7 @@
         },
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://habits-client.vercel.app/"
+          "value": "https://grocery-client-kohl.vercel.app/"
         }
       ]
     }
