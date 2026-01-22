@@ -2,8 +2,9 @@ import moment from 'moment';
 
 export class ProductService {
 
-  constructor( productRepository ) {
+  constructor( productRepository, categoryRepository ) {
     this.productRepository = productRepository;
+    this.categoryRepository = categoryRepository;
   };
 
   createProduct = async product => {
@@ -17,7 +18,8 @@ export class ProductService {
     const pagination = {};
 
     if ( query.category ) {
-      filters.category = query.category;
+      const category = await this.categoryRepository.findBySlug( query.category );
+      filters.category = category._id;
     }
 
     if ( query.archived !== undefined ) {

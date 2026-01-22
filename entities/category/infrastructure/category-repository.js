@@ -20,6 +20,10 @@ export class CategoryRepository {
     return await this.model.findOne( { _id: id } );
   };
 
+  findBySlug = async slug => {
+    return await this.model.findOne( { slug } );
+  };
+
   update = async ( id, category ) => {
     return await this.model.findOneAndUpdate( { _id: id }, category, { new: true } );
   };
