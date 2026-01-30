@@ -32,13 +32,16 @@ export class ProductService {
       sort[query.sort] = query.order === 'desc' ? -1 : 1;
     }
 
-    const limit = Math.min( Number( query.limit ) || 20, 100 );
+    const limit = Math.min( Number( query.limit || 20 ), 100 );
     const page = Number( query.page ) || 1;
 
     pagination.limit = limit;
     pagination.skip = ( page - 1 ) * limit;
 
-    return await this.productRepository.find( { filters, sort, pagination } );
+    const products = await this.productRepository.find( { filters, sort, pagination } );
+    const total = await this.productRepository.count( { filters, sort } );
+
+    return { data: products, total, page, limit };
   };
 
   deleteProduct = async id => {

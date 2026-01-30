@@ -18,7 +18,9 @@ export class OrderController {
       const order = await this.orderService.getAllOrders( {
         status: req.query.status,
         sort: req.query.sort,
-        order: req.query.order
+        order: req.query.order,
+        page: req.query.page,
+        limit: req.query.limit
       } );
       res.json( order );
     } catch ( error ) {
@@ -37,7 +39,13 @@ export class OrderController {
 
   getMyOrders = async ( req, res, next ) => {
     try {
-      const orders = await this.orderService.getMyOrders( req.user.id );
+      const orders = await this.orderService.getMyOrders( {
+        user: req.user.id,
+        sort: req.query.sort,
+        order: req.query.order,
+        page: req.query.page,
+        limit: req.query.limit
+      } );
       res.json( orders );
     } catch ( error ) {
       next( error );

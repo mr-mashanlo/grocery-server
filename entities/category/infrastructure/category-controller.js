@@ -27,7 +27,9 @@ export class CategoryController {
       const categories = await this.categoryService.getAllCategories( {
         archived: req.query.archived,
         sort: req.query.sort,
-        order: req.query.order
+        order: req.query.order,
+        page: req.query.page,
+        limit: req.query.limit
       } );
       res.json( categories );
     } catch ( error ) {

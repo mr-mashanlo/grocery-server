@@ -14,6 +14,7 @@ export class CategoryService {
   getAllCategories = async ( query ) => {
     const filters = {};
     const sort = {};
+    const pagination = {};
 
     if ( query.archived !== undefined ) {
       filters.archived = query.archived === 'true';
@@ -25,7 +26,16 @@ export class CategoryService {
       sort[query.sort] = query.order === 'desc' ? -1 : 1;
     }
 
-    return await this.categoryRepository.find( { filters, sort } );
+    const limit = Math.min( Number( query.limit || 20 ), 100 );
+    const page = Number( query.page ) || 1;
+
+    pagination.limit = limit;
+    pagination.skip = ( page - 1 ) * limit;
+
+    const categories = await this.categoryRepository.find( { filters, sort, pagination } );
+    const total = await this.categoryRepository.count( { filters, sort } );
+
+    return { data: categories, total, page, limit  };
   };
 
   deleteCategory = async id => {

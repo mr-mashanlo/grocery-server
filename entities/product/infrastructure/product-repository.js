@@ -4,6 +4,10 @@ export class ProductRepository {
     this.model = model;
   }
 
+  count = async ( { filters, sort } ) => {
+    return await this.model.countDocuments( filters ).sort( sort );
+  };
+
   create = async product => {
     return await this.model.create( product );
   };

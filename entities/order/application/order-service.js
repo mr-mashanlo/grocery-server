@@ -17,9 +17,10 @@ export class OrderService {
     return await this.orderRepository.create( { user: id, address: address._id, createdAt, ...order } );
   };
 
-  getAllOrders = async ( query ) => {
+  getAllOrders = async query => {
     const filters = {};
     const sort = {};
+    const pagination = {};
 
     if ( query.status !== undefined ) {
       filters.status = query.status;
@@ -31,15 +32,47 @@ export class OrderService {
       sort[query.sort] = query.order === 'desc' ? -1 : 1;
     }
 
-    return await this.orderRepository.find( { filters, sort } );
+    const limit = Math.min( Number( query.limit || 20 ), 100 );
+    const page = Number( query.page ) || 1;
+
+    pagination.limit = limit;
+    pagination.skip = ( page - 1 ) * limit;
+
+    const orders = await this.orderRepository.find( { filters, sort, pagination } );
+    const total = await this.orderRepository.count( { filters, sort } );
+
+    return { data: orders, total, page, limit };
   };
 
   getOrderById = async id => {
     return await this.orderRepository.findById( id );
   };
 
-  getMyOrders = async id => {
-    return await this.orderRepository.findByUserId( id );
+  getMyOrders = async query => {
+    const filters = {};
+    const sort = {};
+    const pagination = {};
+
+    if ( query.user !== undefined ) {
+      filters.user = query.user;
+    }
+
+    const allowedSortFields = [ 'createdAt' ];
+
+    if ( allowedSortFields.includes( query.sort ) ) {
+      sort[query.sort] = query.order === 'desc' ? -1 : 1;
+    }
+
+    const limit = Math.min( Number( query.limit || 20 ), 100 );
+    const page = Number( query.page ) || 1;
+
+    pagination.limit = limit;
+    pagination.skip = ( page - 1 ) * limit;
+
+    const orders = await this.orderRepository.find( { filters, sort, pagination } );
+    const total = await this.orderRepository.count( { filters, sort } );
+
+    return { data: orders, total, page, limit };
   };
 
   updateOrderStatus = async ( id, status ) => {

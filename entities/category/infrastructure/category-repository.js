@@ -4,6 +4,10 @@ export class CategoryRepository {
     this.model = model;
   }
 
+  count = async ( { filters, sort } ) => {
+    return await this.model.countDocuments( filters ).sort( sort );
+  };
+
   create = async category => {
     return await this.model.create( category );
   };
@@ -12,8 +16,8 @@ export class CategoryRepository {
     return await this.model.delete( { _id: id } );
   };
 
-  find = async ( { filter, sort } ) => {
-    return await this.model.find( filter ).sort( sort );
+  find = async ( { filter, sort, pagination } ) => {
+    return await this.model.find( filter ).sort( sort ).limit( pagination.limit ).skip( pagination.skip );
   };
 
   findById = async id => {
