@@ -44,6 +44,10 @@ export class AuthService {
   };
 
   refresh = async ( token ) => {
+    if ( !token ) {
+      throw new AuthError( 498, 'TOKEN_HAS_EXPIRED', [ { name: 'token', message: 'Refresh token has expired' } ] );
+    }
+
     const hashedToken = this.tokenService.hashRefreshToken( token );
     const user = await this.userRepository.findByRefreshToken( hashedToken );
 
