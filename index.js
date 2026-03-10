@@ -5,12 +5,12 @@ import cors from 'cors';
 import express from 'express';
 import mongoose from 'mongoose';
 
-import { addressRouter } from './routers/address-router.js';
-import { authRouter } from './routers/auth-router.js';
-import { categoryRouter } from './routers/category-router.js';
-import { orderRouter } from './routers/order-router.js';
-import { productRouter } from './routers/product-router.js';
-import { errorHandler } from './shared/error-handler.js';
+import { errorHandler } from './middlewares/error-handler.js';
+import { addressRouter } from './modules/address/address-router.js';
+import { authRouter } from './modules/auth/auth-router.js';
+import { categoryRouter } from './modules/category/category-router.js';
+import { orderRouter } from './modules/order/order-router.js';
+import { productRouter } from './modules/product/product-router.js';
 
 const app = express();
 app.use( cors( { credentials: true, origin: [ process.env.FRONT_URL ] } ) );
