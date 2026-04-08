@@ -15,22 +15,16 @@ export class CategoryController {
 
   deleteCategory = async ( req, res, next ) => {
     try {
-      const category = await this.categoryService.createCategory( req.params.id );
+      const category = await this.categoryService.deleteCategory( req.params.id );
       res.json( category );
     } catch ( error ) {
       next( error );
     }
   };
 
-  getAllCategories = async ( req, res, next ) => {
+  getCategories = async ( req, res, next ) => {
     try {
-      const categories = await this.categoryService.getAllCategories( {
-        archived: req.query.archived,
-        sort: req.query.sort,
-        order: req.query.order,
-        page: req.query.page,
-        limit: req.query.limit
-      } );
+      const categories = await this.categoryService.getCategories( req.query );
       res.json( categories );
     } catch ( error ) {
       next( error );
@@ -48,7 +42,7 @@ export class CategoryController {
 
   updateCategory = async ( req, res, next ) => {
     try {
-      const category = await this.categoryService.updateCategory( req.params.id );
+      const category = await this.categoryService.updateCategory( req.params.id, req.body );
       res.json( category );
     } catch ( error ) {
       next( error );
