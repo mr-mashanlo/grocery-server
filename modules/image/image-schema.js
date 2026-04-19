@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const ImageSchema = z.object( {
   path: z.string().min( 3 ),
-  ulr: z.string().min( 3 ),
+  url: z.string().min( 3 ),
   alt: z.string().min( 3 )
 } );
 

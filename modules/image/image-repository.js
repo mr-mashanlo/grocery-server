@@ -20,8 +20,8 @@ export class ImageRepository {
     return await this.model.find( filters ).sort( sort ).limit( pagination.limit ).skip( pagination.skip );
   };
 
-  findById = async id => {
-    return await this.model.findOne( { _id: id } );
+  findById = async _id => {
+    return await this.model.findOne( { _id } );
   };
 
   findOne = async query => {

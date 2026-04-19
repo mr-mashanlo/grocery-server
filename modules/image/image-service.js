@@ -1,4 +1,4 @@
-import { ImageFilteringSchema, ImagePaginationSchema, ImageSortingSchema } from './image-schema.js';
+import { ImageFilteringSchema, ImagePaginationSchema, ImageSchema, ImageSortingSchema } from './image-schema.js';
 
 export class ImageService {
 
@@ -7,6 +7,7 @@ export class ImageService {
   };
 
   createImage = async image => {
+    ImageSchema.parse( image );
     return await this.imageRepository.create( image );
   };
 
@@ -28,6 +29,7 @@ export class ImageService {
   };
 
   updateImage = async ( id, image ) => {
+    ImageSchema.parse( image );
     return await this.imageRepository.update( { _id: id }, image );
   };
 
