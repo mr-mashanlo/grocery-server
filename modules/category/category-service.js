@@ -1,26 +1,20 @@
 import slug from 'slug';
 
-import { CategoryFilteringSchema, CategoryPaginationSchema, CategorySortingSchema } from './category-schema.js';
+import { CategoryFilteringSchema, CategoryPaginationSchema, CategorySchema, CategorySortingSchema } from './category-schema.js';
 
 export class CategoryService {
 
-  constructor( categoryRepository, categoryImageRepository, imageRepository ) {
+  constructor( categoryRepository ) {
     this.categoryRepository = categoryRepository;
-    this.categoryImageRepository = categoryImageRepository;
-    this.imageRepository = imageRepository;
   };
 
   createCategory = async body => {
-    const category = await this.categoryRepository.create( { name: body.name, slug: slug( body.name ) } );
-    await this.categoryImageRepository.create( { category: category._id, image: body.image } );
-    const image = await this.imageRepository.findById( body.image );
-    return { ...category._doc, image };
+    CategorySchema.parse( body );
+    return await this.categoryRepository.create( { ...body, slug: slug( body.name ) } );
   };
 
   deleteCategory = async id => {
-    await this.categoryRepository.delete( { _id: id } );
-    await this.categoryImageRepository.delete( { category: id } );
-    return { ok: true };
+    return await this.categoryRepository.delete( { _id: id } );
   };
 
   getCategories = async query => {
@@ -33,17 +27,12 @@ export class CategoryService {
   };
 
   getCategoryById = async id => {
-    const category = await this.categoryRepository.findById( id );
-    const categoryImage = await this.categoryImageRepository.findOne( { category: id } );
-    const image = await this.imageRepository.findById( categoryImage.image );
-    return { ...category._doc, image };
+    return await this.categoryRepository.findById( id );
   };
 
   updateCategory = async ( id, body ) => {
-    const category = await this.categoryRepository.update( { _id: id }, { name: body.name, archived: body.archived, slug: slug( body.name ) } );
-    await this.categoryImageRepository.update( { category: category._id }, { image: body.image } );
-    const image = await this.imageRepository.findById( body.image );
-    return { ...category._doc, image };
+    CategorySchema.parse( body );
+    return await this.categoryRepository.update( { _id: id }, { ...body, slug: slug( body.name ) } );
   };
 
 };

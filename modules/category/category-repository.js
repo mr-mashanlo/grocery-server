@@ -21,37 +21,34 @@ export class CategoryRepository {
       { $match: filters },
       {
         $lookup: {
-          from: 'category-images',
-          let: { categoryId: '$_id' },
-          pipeline: [
-            { $match: { $expr: { $eq: [ '$category', '$$categoryId' ] } } },
-            {
-              $lookup: {
-                from: 'images',
-                localField: 'image',
-                foreignField: '_id',
-                as: 'imageData'
-              }
-            },
-            { $unwind: '$imageData' },
-            { $replaceRoot: { newRoot: '$imageData' } }
-          ],
+          from: 'images',
+          localField: 'image',
+          foreignField: '_id',
           as: 'image'
         }
       },
-      { $unwind: { path: '$image', preserveNullAndEmptyArrays: true } },
+      {
+        $unwind: {
+          path: '$image',
+          preserveNullAndEmptyArrays: true
+        }
+      },
       { $sort: sort },
       { $skip: pagination.skip },
       { $limit: pagination.limit }
     ] );
   };
 
-  findById = async id => {
-    return await this.model.findOne( { _id: id } );
+  findById = async _id => {
+    return await this.model.findOne( { _id } ).populate( [ 'image' ] );
+  };
+
+  findBySlug = async slug => {
+    return await this.model.findOne( { slug } ).populate( [ 'images' ] );
   };
 
   findOne = async query => {
-    return await this.model.findOne( query );
+    return await this.model.findOne( query ).populate( [ 'image' ] );
   };
 
   update = async ( query, data ) => {
