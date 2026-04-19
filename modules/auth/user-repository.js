@@ -8,8 +8,8 @@ export class UserRepository {
     return await this.model.create( user );
   };
 
-  findById = async id => {
-    return await this.model.findOne( { _id: id } );
+  findById = async _id => {
+    return await this.model.findOne( { _id } );
   };
 
   findByNickname = async nickname => {
@@ -20,12 +20,12 @@ export class UserRepository {
     return await this.model.findOne( { refreshToken } );
   };
 
-  updateRefreshToken = async ( id, refreshToken ) => {
-    return await this.model.findOneAndUpdate( { _id: id }, { refreshToken, expiredAt: Date.now() + process.env.COOKIE_REFRESH_TIME }, { new: true } );
+  updateRefreshToken = async ( _id, refreshToken ) => {
+    return await this.model.findOneAndUpdate( { _id }, { refreshToken, expiredAt: Date.now() + process.env.COOKIE_REFRESH_TIME }, { returnDocument: 'after' } );
   };
 
-  clearRefreshToken = async id => {
-    return await this.model.findOneAndUpdate( { _id: id }, { refreshToken: null, expiredAt: 0 }, { new: true } );
+  clearRefreshToken = async _id => {
+    return await this.model.findOneAndUpdate( { _id }, { refreshToken: null, expiredAt: 0 }, { returnDocument: 'after' } );
   };
 
 }

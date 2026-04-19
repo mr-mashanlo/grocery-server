@@ -9,7 +9,6 @@ const router = Router();
 
 router.post( '/signin', validate( AuthSchema ), authController.signIn );
 router.post( '/signup', validate( AuthSchema ), authController.signUp );
-router.get( '/signout', isAuth, authController.signOut );
-router.get( '/refresh', authController.refresh );
+router.get( '/me', isAuth, authController.me );
 
 export { router as authRouter };

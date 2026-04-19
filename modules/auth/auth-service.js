@@ -39,11 +39,6 @@ export class AuthService {
     return { user: { _id: user._id, nickname: user.nickname }, accessToken, refreshToken };
   };
 
-  signOut = async id => {
-    await this.userRepository.clearRefreshToken( id );
-    return { user: null };
-  };
-
   refreshToken = async refreshToken => {
     const hashedRefreshToken = this.tokenService.hashRefreshToken( refreshToken );
     const user = await this.userRepository.findByRefreshToken( hashedRefreshToken );
@@ -56,6 +51,10 @@ export class AuthService {
     await this.userRepository.updateRefreshToken( user.id, newHashedRefreshToken );
 
     return { id: user.id, nickname: user.nickname, accessToken: newAccessToken, refreshToken: newRefreshToken };
+  };
+
+  me = async id => {
+    return await this.userRepository.findByid( id );
   };
 
 };
