@@ -1,59 +1,42 @@
-import moment from 'moment';
+import slug from 'slug';
+
+import { ProductFilteringSchema, ProductPaginationSchema, ProductSchema, ProductSortingSchema } from './product-schema.js';
 
 export class ProductService {
 
-  constructor( productRepository, categoryRepository ) {
+  constructor( productRepository ) {
     this.productRepository = productRepository;
-    this.categoryRepository = categoryRepository;
   };
 
-  createProduct = async product => {
-    const createdAt = moment().format( 'YYYY-MM-DD' );
-    return await this.productRepository.create( { ...product, createdAt } );
-  };
-
-  getAllProducts = async query => {
-    const filters = {};
-    const sort = {};
-    const pagination = {};
-
-    if ( query.category ) {
-      const category = await this.categoryRepository.findBySlug( query.category );
-      filters.category = category._id;
-    }
-
-    if ( query.archived !== undefined ) {
-      filters.archived = query.archived === 'true';
-    }
-
-    const allowedSortFields = [ 'title', 'price', 'createdAt' ];
-
-    if ( allowedSortFields.includes( query.sort ) ) {
-      sort[query.sort] = query.order === 'desc' ? -1 : 1;
-    }
-
-    const limit = Math.min( Number( query.limit || 20 ), 100 );
-    const page = Number( query.page ) || 1;
-
-    pagination.limit = limit;
-    pagination.skip = ( page - 1 ) * limit;
-
-    const products = await this.productRepository.find( { filters, sort, pagination } );
-    const total = await this.productRepository.count( { filters, sort } );
-
-    return { data: products, total, page, limit };
+  createProduct = async body => {
+    ProductSchema.omit( { slug: true } ).parse( body );
+    return await this.productRepository.create( { ...body, slug: slug( body.name ) } );
   };
 
   deleteProduct = async id => {
-    return await this.productRepository.delete( id );
+    return await this.productRepository.delete( { _id: id } );
+  };
+
+  getProducts = async query => {
+    const filters = ProductFilteringSchema.parse( query );
+    const sort = ProductSortingSchema.parse( query );
+    const pagination = ProductPaginationSchema.parse( query );
+    const data = await this.productRepository.find( { filters, sort: { [sort.sort]: sort.order }, pagination: { ...pagination, skip: ( pagination.page - 1 ) * pagination.limit } } );
+    const total = await this.productRepository.count( { filters } );
+    return { data, total, ...pagination };
   };
 
   getProductById = async id => {
     return await this.productRepository.findById( id );
   };
 
-  updateProduct = async ( id, product ) => {
-    return await this.productRepository.update( id, product );
+  getProductBySlug = async slug => {
+    return await this.productRepository.findOne( { slug } );
+  };
+
+  updateProduct = async ( id, body ) => {
+    ProductSchema.omit( { slug: true } ).parse( body );
+    return await this.productRepository.update( { _id: id }, body );
   };
 
 };

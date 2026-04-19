@@ -1,18 +1,18 @@
 import { model, Schema } from 'mongoose';
-import autopopulate from 'mongoose-autopopulate';
 
 const ProductSchema = new Schema( {
-  image: { type: String },
-  title: { type: String, require: true, trim: true },
+  name: { type: String, trim: true, require: true },
+  slug: { type: String, trim: true, require: true },
   description: { type: String, trim: true },
   price: { type: Number, default: 0 },
-  stock: { type: Number, default: 0 },
-  unit: { type: String, default: 'pc' },
+  salePrice: { type: Number },
   archived: { type: Boolean, default: false },
-  createdAt: { type: String },
-  category: { type: Schema.Types.ObjectId, ref: 'Category', autopopulate: true }
+  images: [ { type: Schema.Types.ObjectId, ref: 'Image' } ],
+  categories: [ {
+    _id: { type: Schema.Types.ObjectId, ref: 'Category' },
+    name: { type: String },
+    slug: { type: String }
+  } ]
 } );
-
-ProductSchema.plugin( autopopulate );
 
 export const ProductModel = model( 'Product', ProductSchema );

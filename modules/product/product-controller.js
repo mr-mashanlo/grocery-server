@@ -15,23 +15,16 @@ export class ProductController {
 
   deleteProduct = async ( req, res, next ) => {
     try {
-      const product = await this.productService.createProduct( req.params.id );
+      const product = await this.productService.deleteProduct( req.params.id );
       res.json( product );
     } catch ( error ) {
       next( error );
     }
   };
 
-  getAllProducts = async ( req, res, next ) => {
+  getProducts = async ( req, res, next ) => {
     try {
-      const products = await this.productService.getAllProducts( {
-        category: req.query.category,
-        archived: req.query.archived,
-        sort: req.query.sort,
-        order: req.query.order,
-        page: req.query.page,
-        limit: req.query.limit
-      } );
+      const products = await this.productService.getProducts( req.query );
       res.json( products );
     } catch ( error ) {
       next( error );
@@ -47,9 +40,18 @@ export class ProductController {
     }
   };
 
+  getProductBySlug = async ( req, res, next ) => {
+    try {
+      const product = await this.productService.getProductBySlug( req.params.slug );
+      res.json( product );
+    } catch ( error ) {
+      next( error );
+    }
+  };
+
   updateProduct = async ( req, res, next ) => {
     try {
-      const product = await this.productService.updateProduct( req.params.id );
+      const product = await this.productService.updateProduct( req.params.id, req.body );
       res.json( product );
     } catch ( error ) {
       next( error );

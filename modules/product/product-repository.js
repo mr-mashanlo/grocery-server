@@ -4,28 +4,68 @@ export class ProductRepository {
     this.model = model;
   }
 
-  count = async ( { filters, sort } ) => {
-    return await this.model.countDocuments( filters ).sort( sort );
+  count = async ( { filters } ) => {
+    return await this.model.countDocuments( filters );
   };
 
-  create = async product => {
-    return await this.model.create( product );
+  create = async data => {
+    return await this.model.create( data );
   };
 
-  delete = async id => {
-    return await this.model.delete( { _id: id } );
+  delete = async query => {
+    return await this.model.deleteMany( query );
   };
 
   find = async ( { filters, sort, pagination } ) => {
-    return await this.model.find( filters ).sort( sort ).limit( pagination.limit ).skip( pagination.skip );
+    return await this.model.aggregate( [
+      { $match: filters },
+      {
+        $lookup: {
+          from: 'images',
+          localField: 'images',
+          foreignField: '_id',
+          as: 'fetchedImages'
+        }
+      },
+      {
+        $set: {
+          images: {
+            $map: {
+              input: '$images',
+              as: 'id',
+              in: {
+                $arrayElemAt: [
+                  {
+                    $filter: {
+                      input: '$fetchedImages',
+                      as: 'img',
+                      cond: { $eq: [ '$$img._id', '$$id' ] }
+                    }
+                  },
+                  0
+                ]
+              }
+            }
+          }
+        }
+      },
+      { $unset: 'fetchedImages' },
+      { $sort: sort },
+      { $skip: pagination.skip },
+      { $limit: pagination.limit }
+    ] );
   };
 
-  findById = async id => {
-    return await this.model.findOne( { _id: id } );
+  findById = async _id => {
+    return await this.model.findOne( { _id } ).populate( [ 'images' ] );
   };
 
-  update = async ( id, product ) => {
-    return await this.model.findOneAndUpdate( { _id: id }, product, { new: true } );
+  findOne = async query => {
+    return await this.model.findOne( query ).populate( [ 'images' ] );
+  };
+
+  update = async ( query, data ) => {
+    return await this.model.findOneAndUpdate( query, data, { returnDocument: 'after' } );
   };
 
 }
