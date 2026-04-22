@@ -1,16 +1,22 @@
 import { model, Schema } from 'mongoose';
-import autopopulate from 'mongoose-autopopulate';
 
 const OrderSchema = new Schema( {
   user: { type: Schema.Types.ObjectId, ref: 'User', require: true, index: true },
-  address: { type: Schema.Types.ObjectId, ref: 'Address', require: true, index: true, autopopulate: true },
-  products: [ { product: { type: Schema.Types.ObjectId, ref: 'Product', require: true, autopopulate: true }, price: { type: Number, default: 0 }, quantity: { type: Number, default: 0 } } ],
+  address: { type: Schema.Types.ObjectId, ref: 'Address', require: true },
   status: { type: String, default: 'Processing' },
-  totalPrice: { type: Number, default: 0 },
-  totalQuantity: { type: Number, default: 0 },
+  total: { type: Number, default: 0 },
+  quantity: { type: Number, default: 0 },
+  products: [ {
+    _id: { type: Schema.Types.ObjectId, ref: 'Product', require: true },
+    name: { type: String },
+    quantity: { type: Number },
+    price: { type: Number },
+    image: {
+      alt: { type: String },
+      url: { type: String }
+    }
+  } ],
   createdAt: { type: String }
 } );
-
-OrderSchema.plugin( autopopulate );
 
 export const OrderModel = model( 'Order', OrderSchema );

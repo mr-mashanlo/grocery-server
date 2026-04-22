@@ -4,25 +4,28 @@ export class OrderController {
     this.orderService = orderService;
   };
 
-  createMyOrder = async ( req, res, next ) => {
+  createOrder = async ( req, res, next ) => {
     try {
-      const order = await this.orderService.createMyOrder( req.user.id, req.body );
+      const order = await this.orderService.createOrder( { ...req.body, user: req.user.id } );
       res.json( order );
     } catch ( error ) {
       next( error );
     }
   };
 
-  getAllOrders = async ( req, res, next ) => {
+  getOrders = async ( req, res, next ) => {
     try {
-      const order = await this.orderService.getAllOrders( {
-        status: req.query.status,
-        sort: req.query.sort,
-        order: req.query.order,
-        page: req.query.page,
-        limit: req.query.limit
-      } );
-      res.json( order );
+      const orders = await this.orderService.getOrders( req.query );
+      res.json( orders );
+    } catch ( error ) {
+      next( error );
+    }
+  };
+
+  getMyOrders = async ( req, res, next ) => {
+    try {
+      const orders = await this.orderService.getOrders( { ...req.query, user: req.user.id } );
+      res.json( orders );
     } catch ( error ) {
       next( error );
     }
@@ -37,24 +40,9 @@ export class OrderController {
     }
   };
 
-  getMyOrders = async ( req, res, next ) => {
+  updateOrder = async ( req, res, next ) => {
     try {
-      const orders = await this.orderService.getMyOrders( {
-        user: req.user.id,
-        sort: req.query.sort,
-        order: req.query.order,
-        page: req.query.page,
-        limit: req.query.limit
-      } );
-      res.json( orders );
-    } catch ( error ) {
-      next( error );
-    }
-  };
-
-  updateOrderStatus = async ( req, res, next ) => {
-    try {
-      const order = await this.orderService.updateOrderStatus( req.params.id, req.body.status );
+      const order = await this.orderService.updateOrder( req.params.id, req.body );
       res.json( order );
     } catch ( error ) {
       next( error );

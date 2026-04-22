@@ -4,28 +4,32 @@ export class OrderRepository {
     this.model = model;
   }
 
-  count = async ( { filters, sort } ) => {
-    return await this.model.countDocuments( filters ).sort( sort );
+  count = async ( { filters } ) => {
+    return await this.model.countDocuments( filters );
   };
 
-  create = async order => {
-    return await this.model.create( order );
+  create = async data => {
+    return await this.model.create( data );
+  };
+
+  delete = async query => {
+    return await this.model.deleteMany( query );
   };
 
   find = async ( { filters, sort, pagination } ) => {
     return await this.model.find( filters ).sort( sort ).limit( pagination.limit ).skip( pagination.skip );
   };
 
-  findById = async id => {
-    return await this.model.findOne( { _id: id } );
+  findById = async _id => {
+    return await this.model.findOne( { _id } );
   };
 
-  findByUserId = async id => {
-    return await this.model.find( { user: id } );
+  findOne = async query => {
+    return await this.model.find( query );
   };
 
-  updateOrderStatus = async ( id, status ) => {
-    return await this.model.findOneAndUpdate( { _id: id }, { status }, { new: true } );
+  update = async ( query, data ) => {
+    return await this.model.findOneAndUpdate( query, data, { returnDocument: 'after' } );
   };
 
 }

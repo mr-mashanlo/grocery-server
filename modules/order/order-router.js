@@ -7,10 +7,10 @@ import { OrderSchema } from './order-schema.js';
 
 const router = Router();
 
-router.post( '/', isAuth, validate( OrderSchema ), orderController.createMyOrder );
-router.get( '/all', isAuth, orderController.getAllOrders );
-router.get( '/', isAuth, orderController.getMyOrders );
-router.get( '/:id', orderController.getOrderById );
-router.put( '/:id', isAuth, orderController.updateOrderStatus );
+router.post( '/', isAuth, validate( OrderSchema.omit( { user: true, address: true, status: true } ) ), orderController.createOrder );
+router.get( '/', isAuth, orderController.getOrders );
+router.get( '/me', isAuth, orderController.getMyOrders );
+router.get( '/:id', isAuth, orderController.getOrderById );
+router.put( '/:id', isAuth, orderController.updateOrder );
 
 export { router as orderRouter };
