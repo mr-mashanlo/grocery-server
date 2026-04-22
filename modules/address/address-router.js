@@ -1,14 +1,15 @@
 import { Router } from 'express';
 
 import { isAuth } from '../../middlewares/is-auth.js';
-import { validate } from '../../middlewares/validate.js';
 import { addressController } from './address-container.js';
-import { AddressSchema } from './address-schema.js';
 
 const router = Router();
 
-router.post( '/', isAuth, validate( AddressSchema ), addressController.createMyAddress );
-router.get( '/', isAuth, addressController.getMyAddress );
-router.put( '/:id', isAuth, validate( AddressSchema ), addressController.updateMyAddress );
+router.post( '/', isAuth, addressController.createAddress );
+router.delete( '/:id', isAuth, addressController.deleteAddress );
+router.get( '/me', isAuth, addressController.getMyAddress );
+router.get( '/:id', isAuth, addressController.getAddressById );
+router.get( '/', isAuth, addressController.getAddresses );
+router.put( '/:id', isAuth, addressController.updateAddress );
 
 export { router as addressRouter };

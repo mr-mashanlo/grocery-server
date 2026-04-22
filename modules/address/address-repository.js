@@ -4,16 +4,32 @@ export class AddressRepository {
     this.model = model;
   }
 
-  create = async address => {
-    return await this.model.create( address );
+  count = async ( { filters } ) => {
+    return await this.model.countDocuments( filters );
   };
 
-  findByUserId = async id => {
-    return await this.model.findOne( { user: id } );
+  create = async data => {
+    return await this.model.create( data );
   };
 
-  update = async ( id, address ) => {
-    return await this.model.findOneAndUpdate( { _id: id }, address, { new: true } );
+  delete = async query => {
+    return await this.model.deleteMany( query );
+  };
+
+  find = async ( { filters, sort, pagination } ) => {
+    return await this.model.find( filters ).sort( sort ).limit( pagination.limit ).skip( pagination.skip );
+  };
+
+  findById = async _id => {
+    return await this.model.findOne( { _id } );
+  };
+
+  findOne = async query => {
+    return await this.model.findOne( query );
+  };
+
+  update = async ( query, data ) => {
+    return await this.model.findOneAndUpdate( query, data, { returnDocument: 'after' } );
   };
 
 }
