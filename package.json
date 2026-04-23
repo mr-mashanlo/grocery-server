@@ -8,10 +8,10 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
-    "build": "node index.js",
     "lint": "eslint . --fix"
   },
   "dependencies": {
+    "@vercel/blob": "^2.3.3",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
