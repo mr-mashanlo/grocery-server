@@ -22,8 +22,9 @@ export class VercelImageController {
   deleteImage = async ( req, res, next ) => {
     try {
       const image = await this.imageService.getImageById( req.params.id );
-      await del( image.url );
-      res.status( 204 ).send();
+      await del( image.path );
+      await this.imageService.deleteImage( req.params.id );
+      res.json( { ok: true } );
     } catch ( error ) {
       next( error );
     }
