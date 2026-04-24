@@ -20,12 +20,12 @@ export class UserRepository {
     return await this.model.findOne( { refreshToken } );
   };
 
-  updateRefreshToken = async ( _id, refreshToken ) => {
-    return await this.model.findOneAndUpdate( { _id }, { refreshToken, expiredAt: Date.now() + process.env.COOKIE_REFRESH_TIME }, { returnDocument: 'after' } );
+  updateRefreshToken = async ( query, data ) => {
+    return await this.model.findOneAndUpdate( query, data, { returnDocument: 'after' } );
   };
 
-  clearRefreshToken = async _id => {
-    return await this.model.findOneAndUpdate( { _id }, { refreshToken: null, expiredAt: 0 }, { returnDocument: 'after' } );
+  clearRefreshToken = async query => {
+    return await this.model.findOneAndUpdate( query, { refreshToken: null, expiredAt: 0 }, { returnDocument: 'after' } );
   };
 
 }

@@ -20,7 +20,7 @@ export class AuthService {
     const refreshToken = this.tokenService.generateRefreshToken();
     const hashedRefreshToken = this.tokenService.hashRefreshToken( refreshToken );
 
-    await this.userRepository.updateRefreshToken( user._id, hashedRefreshToken );
+    await this.userRepository.updateRefreshToken( { _id: user._id }, { refreshToken: hashedRefreshToken, expiredAt: Date.now() + +process.env.COOKIE_REFRESH_TIME } );
     return { user: { _id: user._id, nickname: user.nickname }, accessToken, refreshToken };
   };
 
@@ -35,7 +35,7 @@ export class AuthService {
     const refreshToken = this.tokenService.generateRefreshToken();
     const hashedRefreshToken = this.tokenService.hashRefreshToken( refreshToken );
 
-    await this.userRepository.updateRefreshToken( user._id, hashedRefreshToken );
+    await this.userRepository.updateRefreshToken( { _id: user._id }, { refreshToken: hashedRefreshToken, expiredAt: Date.now() + +process.env.COOKIE_REFRESH_TIME } );
     return { user: { _id: user._id, nickname: user.nickname }, accessToken, refreshToken };
   };
 
@@ -43,14 +43,19 @@ export class AuthService {
     const hashedRefreshToken = this.tokenService.hashRefreshToken( refreshToken );
     const user = await this.userRepository.findByRefreshToken( hashedRefreshToken );
 
+    if ( !user ) throw new Unauthorized( [ { name: 'token', message: 'Invalid or reused token' } ] );
     if ( +user.expiredAt < Date.now() ) throw new Unauthorized( [ { name: 'token', message: 'Token has expired' } ] );
 
-    const newAccessToken = this.tokenService.generateAccessToken( { id: user.id, nickname: user.nickname } );
+    const payload = { id: user._id, nickname: user.nickname };
+    const newAccessToken = this.tokenService.generateAccessToken( payload );
     const newRefreshToken = this.tokenService.generateRefreshToken();
     const newHashedRefreshToken = this.tokenService.hashRefreshToken( newRefreshToken );
-    await this.userRepository.updateRefreshToken( user.id, newHashedRefreshToken );
 
-    return { id: user.id, nickname: user.nickname, accessToken: newAccessToken, refreshToken: newRefreshToken };
+    const updatedUser = await this.userRepository.updateRefreshToken( { _id: user._id, refreshToken: hashedRefreshToken }, { refreshToken: newHashedRefreshToken, expiredAt: Date.now() + +process.env.COOKIE_REFRESH_TIME } );
+
+    if ( !updatedUser ) throw new Unauthorized( [ { message: 'Token already rotated' } ] );
+
+    return { id: user._id, nickname: user.nickname, accessToken: newAccessToken, refreshToken: newRefreshToken };
   };
 
   me = async id => {
