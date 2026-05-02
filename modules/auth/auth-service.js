@@ -16,7 +16,8 @@ export class AuthService {
     const isValid = this.passwordHasher.compare( password, user.password );
     if ( !isValid ) throw new BadRequest( [ { name: 'password', message: 'Incorrect password' } ] );
 
-    const accessToken = this.tokenService.generateAccessToken( { id: user._id, nickname: user.nickname } );
+    const payload = { id: user._id, nickname: user.nickname, role: user.role };
+    const accessToken = this.tokenService.generateAccessToken( payload );
     const refreshToken = this.tokenService.generateRefreshToken();
     const hashedRefreshToken = this.tokenService.hashRefreshToken( refreshToken );
 
@@ -31,7 +32,8 @@ export class AuthService {
     const hash = this.passwordHasher.hash( password );
     const user = await this.userRepository.create( { nickname, password: hash } );
 
-    const accessToken = this.tokenService.generateAccessToken( { id: user._id, nickname: user.nickname } );
+    const payload = { id: user._id, nickname: user.nickname, role: user.role };
+    const accessToken = this.tokenService.generateAccessToken( payload );
     const refreshToken = this.tokenService.generateRefreshToken();
     const hashedRefreshToken = this.tokenService.hashRefreshToken( refreshToken );
 
@@ -46,15 +48,13 @@ export class AuthService {
     if ( !user ) throw new Unauthorized( [ { name: 'token', message: 'Invalid or reused token' } ] );
     if ( +user.expiredAt < Date.now() ) throw new Unauthorized( [ { name: 'token', message: 'Token has expired' } ] );
 
-    const payload = { id: user._id, nickname: user.nickname };
+    const payload = { id: user._id, nickname: user.nickname, role: user.role };
     const newAccessToken = this.tokenService.generateAccessToken( payload );
     const newRefreshToken = this.tokenService.generateRefreshToken();
     const newHashedRefreshToken = this.tokenService.hashRefreshToken( newRefreshToken );
-
     const updatedUser = await this.userRepository.updateRefreshToken( { _id: user._id, refreshToken: hashedRefreshToken }, { refreshToken: newHashedRefreshToken, expiredAt: Date.now() + +process.env.COOKIE_REFRESH_TIME } );
 
     if ( !updatedUser ) throw new Unauthorized( [ { message: 'Token already rotated' } ] );
-
     return { id: user._id, nickname: user.nickname, accessToken: newAccessToken, refreshToken: newRefreshToken };
   };
 
