@@ -3,6 +3,8 @@ import 'dotenv/config';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
+import { rateLimit } from 'express-rate-limit';
+import { slowDown } from 'express-slow-down';
 import mongoose from 'mongoose';
 
 import { errorHandler } from './middlewares/error-handler.js';
@@ -14,10 +16,26 @@ import { orderRouter } from './modules/order/order-router.js';
 import { productRouter } from './modules/product/product-router.js';
 
 const app = express();
+
+const apiLimiter = rateLimit( {
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true
+} );
+
+const speedLimiter = slowDown( {
+  windowMs: 15 * 60 * 1000,
+  delayAfter: 50,
+  delayMs: hits => ( hits - 50 ) * 500
+} );
+
 app.use( cors( { credentials: true, origin: [ process.env.FRONT_URL ] } ) );
 app.use( cookieParser() );
 app.use( express.json() );
 app.use( express.static( 'uploads' ) );
+
+app.use( apiLimiter );
+app.use( speedLimiter );
 
 app.use( '/auth', authRouter );
 app.use( '/images', imageRouter );
