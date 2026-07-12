@@ -22,7 +22,7 @@ export class AuthService {
     const hashedRefreshToken = this.tokenService.hashRefreshToken( refreshToken );
 
     await this.userRepository.updateRefreshToken( { _id: user._id }, { refreshToken: hashedRefreshToken, expiredAt: Date.now() + +process.env.COOKIE_REFRESH_TIME } );
-    return { user: { _id: user._id, nickname: user.nickname }, accessToken, refreshToken };
+    return { _id: user._id, nickname: user.nickname, role: user.role, accessToken, refreshToken };
   };
 
   signUp = async ( nickname, password ) => {
@@ -38,7 +38,7 @@ export class AuthService {
     const hashedRefreshToken = this.tokenService.hashRefreshToken( refreshToken );
 
     await this.userRepository.updateRefreshToken( { _id: user._id }, { refreshToken: hashedRefreshToken, expiredAt: Date.now() + +process.env.COOKIE_REFRESH_TIME } );
-    return { user: { _id: user._id, nickname: user.nickname }, accessToken, refreshToken };
+    return { _id: user._id, nickname: user.nickname, role: user.role, accessToken, refreshToken };
   };
 
   refreshToken = async refreshToken => {
@@ -55,7 +55,7 @@ export class AuthService {
     const updatedUser = await this.userRepository.updateRefreshToken( { _id: user._id, refreshToken: hashedRefreshToken }, { refreshToken: newHashedRefreshToken, expiredAt: Date.now() + +process.env.COOKIE_REFRESH_TIME } );
 
     if ( !updatedUser ) throw new Unauthorized( [ { message: 'Token already rotated' } ] );
-    return { id: user._id, nickname: user.nickname, accessToken: newAccessToken, refreshToken: newRefreshToken };
+    return { _id: user._id, nickname: user.nickname, role: user.role, accessToken: newAccessToken, refreshToken: newRefreshToken };
   };
 
   me = async id => {

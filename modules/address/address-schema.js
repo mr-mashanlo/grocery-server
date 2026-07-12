@@ -16,7 +16,7 @@ export const AddressFilteringSchema = z.object( {
 export const AddressSortingSchema = z.object( {
   order: z.preprocess(
     v => [ 'asc', 'desc' ].includes( v ) ? v : undefined,
-    z.enum( [ 'asc', 'desc' ] ).transform( v => v === 'asc' ? 1 : -1  ).default( 1 ).optional()
+    z.enum( [ 'asc', 'desc' ] ).transform( v => v === 'asc' ? 1 : -1  ).default( -1 ).optional()
   ),
   sort: z.preprocess(
     v => [ '_id', 'city', 'address' ].includes( v ) ? v : undefined,

@@ -13,7 +13,7 @@ export const ImageFilteringSchema = z.object( {
 export const ImageSortingSchema = z.object( {
   order: z.preprocess(
     v => [ 'asc', 'desc' ].includes( v ) ? v : undefined,
-    z.enum( [ 'asc', 'desc' ] ).transform( v => v === 'asc' ? 1 : -1  ).default( 1 ).optional()
+    z.enum( [ 'asc', 'desc' ] ).transform( v => v === 'asc' ? 1 : -1  ).default( -1 ).optional()
   ),
   sort: z.preprocess(
     v => [ '_id', 'alt' ].includes( v ) ? v : undefined,

@@ -17,26 +17,27 @@ export class CategoryRepository {
   };
 
   find = async ( { filters, sort, pagination } ) => {
-    return await this.model.aggregate( [
-      { $match: filters },
-      {
-        $lookup: {
-          from: 'images',
-          localField: 'image',
-          foreignField: '_id',
-          as: 'image'
-        }
-      },
-      {
-        $unwind: {
-          path: '$image',
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      { $sort: sort },
-      { $skip: pagination.skip },
-      { $limit: pagination.limit }
-    ] );
+    return await this.model.find( filters ).sort( sort ).limit( pagination.limit ).skip( pagination.skip ).populate( [ 'image' ] );
+    // return await this.model.aggregate( [
+    //   { $match: filters },
+    //   {
+    //     $lookup: {
+    //       from: 'images',
+    //       localField: 'image',
+    //       foreignField: '_id',
+    //       as: 'image'
+    //     }
+    //   },
+    //   {
+    //     $unwind: {
+    //       path: '$image',
+    //       preserveNullAndEmptyArrays: true
+    //     }
+    //   },
+    //   { $sort: sort },
+    //   { $skip: pagination.skip },
+    //   { $limit: pagination.limit }
+    // ] );
   };
 
   findById = async _id => {
@@ -44,7 +45,7 @@ export class CategoryRepository {
   };
 
   findBySlug = async slug => {
-    return await this.model.findOne( { slug } ).populate( [ 'images' ] );
+    return await this.model.findOne( { slug } ).populate( [ 'image' ] );
   };
 
   findOne = async query => {

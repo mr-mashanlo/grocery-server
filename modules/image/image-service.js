@@ -29,7 +29,7 @@ export class ImageService {
   };
 
   updateImage = async ( id, image ) => {
-    ImageSchema.parse( image );
+    ImageSchema.omit( { path: true, url: true } ).parse( image );
     return await this.imageRepository.update( { _id: id }, image );
   };
 

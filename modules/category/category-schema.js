@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
 export const CategorySchema = z.object( {
-  image: z.string().min( 3 ),
+  image: z.string(),
   name: z.string().min( 3 ),
-  archived: z.boolean()
+  archived: z.boolean().optional()
 } );
 
 export const CategoryFilteringSchema = z.object( {
@@ -14,7 +14,7 @@ export const CategoryFilteringSchema = z.object( {
 export const CategorySortingSchema = z.object( {
   order: z.preprocess(
     v => [ 'asc', 'desc' ].includes( v ) ? v : undefined,
-    z.enum( [ 'asc', 'desc' ] ).transform( v => v === 'asc' ? 1 : -1  ).default( 1 ).optional()
+    z.enum( [ 'asc', 'desc' ] ).transform( v => v === 'asc' ? 1 : -1  ).default( -1 ).optional()
   ),
   sort: z.preprocess(
     v => [ '_id', 'name', 'archived' ].includes( v ) ? v : undefined,

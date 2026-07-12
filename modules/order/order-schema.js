@@ -1,21 +1,25 @@
 import { z } from 'zod';
 
+const ImageSchema = z.object( {
+  alt: z.string(),
+  url: z.string()
+} );
+
+const ProductSchema = z.object( {
+  _id: z.string(),
+  name: z.string(),
+  quantity: z.number(),
+  price: z.number(),
+  image: ImageSchema
+} );
+
 export const OrderSchema = z.object( {
   user: z.string(),
   address: z.string(),
   status: z.enum( [ 'Processing', 'Delivering', 'Done', 'Canceled' ] ),
   total: z.number(),
   quantity: z.number(),
-  products: z.array( z.object( {
-    _id: z.string(),
-    name: z.string(),
-    quantity: z.number(),
-    price: z.number(),
-    image: z.object( {
-      alt: z.string(),
-      url: z.string()
-    } )
-  } ) )
+  products: z.array( ProductSchema )
 } );
 
 export const OrderFilteringSchema = z.object( {
@@ -27,7 +31,7 @@ export const OrderFilteringSchema = z.object( {
 export const OrderSortingSchema = z.object( {
   order: z.preprocess(
     v => [ 'asc', 'desc' ].includes( v ) ? v : undefined,
-    z.enum( [ 'asc', 'desc' ] ).transform( v => v === 'asc' ? 1 : -1  ).default( 1 ).optional()
+    z.enum( [ 'asc', 'desc' ] ).transform( v => v === 'asc' ? 1 : -1  ).default( -1 ).optional()
   ),
   sort: z.preprocess(
     v => [ '_id', 'totalPrice', 'totalQuantity' ].includes( v ) ? v : undefined,

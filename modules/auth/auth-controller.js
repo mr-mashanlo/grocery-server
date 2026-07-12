@@ -7,10 +7,10 @@ export class AuthController {
   signIn = async ( req, res, next ) => {
     try {
       const { nickname, password } = req.body;
-      const { user, accessToken, refreshToken } = await this.authService.signIn( nickname, password );
+      const { _id, accessToken, refreshToken } = await this.authService.signIn( nickname, password );
       res.cookie( 'accessToken', accessToken, { maxAge: process.env.COOKIE_ACCESS_TIME, httpOnly: true, sameSite: 'none', secure: true } );
       res.cookie( 'refreshToken', refreshToken, { maxAge: process.env.COOKIE_REFRESH_TIME, httpOnly: true, sameSite: 'none', secure: true } );
-      res.json( { id: user._id } );
+      res.json( { _id } );
     } catch ( error ) {
       next( error );
     }
@@ -19,10 +19,10 @@ export class AuthController {
   signUp = async ( req, res, next ) => {
     try {
       const { nickname, password } = req.body;
-      const { user, accessToken, refreshToken } = await this.authService.signUp( nickname, password );
+      const { _id, accessToken, refreshToken } = await this.authService.signUp( nickname, password );
       res.cookie( 'accessToken', accessToken, { maxAge: process.env.COOKIE_ACCESS_TIME, httpOnly: true, sameSite: 'none', secure: true } );
       res.cookie( 'refreshToken', refreshToken, { maxAge: process.env.COOKIE_REFRESH_TIME, httpOnly: true, sameSite: 'none', secure: true } );
-      res.json( { id: user._id } );
+      res.json( { _id } );
     } catch ( error ) {
       next( error );
     }
@@ -30,18 +30,10 @@ export class AuthController {
 
   refresh = async ( req, res, next ) => {
     try {
-      const { user, accessToken, refreshToken } = await this.authService.refresh( req.cookies.refreshToken );
+      const { _id, accessToken, refreshToken } = await this.authService.refresh( req.cookies.refreshToken );
       res.cookie( 'accessToken', accessToken, { maxAge: process.env.COOKIE_ACCESS_TIME, httpOnly: true, sameSite: 'none', secure: true } );
       res.cookie( 'refreshToken', refreshToken, { maxAge: process.env.COOKIE_REFRESH_TIME, httpOnly: true, sameSite: 'none', secure: true } );
-      res.json( { id: user._id } );
-    } catch ( error ) {
-      next( error );
-    }
-  };
-
-  me = async ( req, res, next ) => {
-    try {
-      res.json( { id: req.user.id } );
+      res.json( { _id } );
     } catch ( error ) {
       next( error );
     }

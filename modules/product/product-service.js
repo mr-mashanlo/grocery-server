@@ -36,7 +36,7 @@ export class ProductService {
 
   updateProduct = async ( id, body ) => {
     ProductSchema.omit( { slug: true } ).parse( body );
-    return await this.productRepository.update( { _id: id }, body );
+    return await this.productRepository.update( { _id: id }, { ...body, slug: slug( body.name ) } );
   };
 
 };
