@@ -37,12 +37,12 @@ app.use( express.static( 'uploads' ) );
 app.use( apiLimiter );
 app.use( speedLimiter );
 
-app.use( '/auth', authRouter );
-app.use( '/images', imageRouter );
-app.use( '/products', productRouter );
-app.use( '/categories', categoryRouter );
-app.use( '/addresses', addressRouter );
-app.use( '/orders', orderRouter );
+app.use( '/api/auth', authRouter );
+app.use( '/api/images', imageRouter );
+app.use( '/api/products', productRouter );
+app.use( '/api/categories', categoryRouter );
+app.use( '/api/addresses', addressRouter );
+app.use( '/api/orders', orderRouter );
 
 app.use( errorHandler );
 
